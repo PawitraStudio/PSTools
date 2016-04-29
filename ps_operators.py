@@ -413,7 +413,8 @@ class KMSSaveProgress(bpy.types.Operator):
             progresspath = bpy.path.ensure_ext(
                 filepath = os.path.join(progressdir, filename + '_01'), ext = ".blend")
 
-            bpy.ops.wm.save_as_mainfile(filepath=progresspath, copy = 1, relative_remap = 1)
+            bpy.data.use_autopack = 0
+            bpy.ops.wm.save_as_mainfile(filepath=progresspath, copy = 1, relative_remap = 1, compress= 1)
             bpy.ops.wm.open_mainfile(filepath=progresspath)
 
         return {'FINISHED'}
