@@ -198,8 +198,9 @@ class PSOpenglTools(bpy.types.Operator):
         #render.resolution_y = 1080
         render.use_simplify = 1
         render.simplify_subdivision = 0
-        render.image_settings.file_format = 'H264'
-        render.ffmpeg.format = 'QUICKTIME'
+        render.image_settings.file_format = 'FFMPEG'
+        render.ffmpeg.format = 'MPEG4'
+        render.ffmpeg.codec = 'H264'
         render.ffmpeg.audio_codec = 'AAC'
         #render.image_settings.compression = 100
         render.image_settings.color_mode = 'RGB'
