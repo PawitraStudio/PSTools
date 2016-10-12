@@ -5,6 +5,7 @@ from bpy.props import BoolProperty
 from bpy.types import Operator, Panel
 
 # TODO : need to add presets for any project
+#TODO add user preferences for output opengl render
 
 def setcamera(context):
     view3d = bpy.context.space_data.region_3d
@@ -94,8 +95,6 @@ class PRJDaihatsuRenderPath(bpy.types.Operator):
             render.use_raytrace =  0
             render.alpha_mode = 'TRANSPARENT'
             render.antialiasing_samples = '16'
-
-
 
         #smart tile size render -- quite fancy name buahahaha
         render_x = render.resolution_x
@@ -224,7 +223,7 @@ class PSOpenglTools(bpy.types.Operator):
             #bpy.context.scene.render.filepath = os.path.join("//../../../03_render/opengl/", filename + "_")
             # below code is the old code for most project
             #bpy.context.scene.render.filepath = os.path.join("//../../render/playblast/", parentdir, filename, filename + "_")
-            bpy.context.scene.render.filepath = os.path.join("//../../render/playblast/", filename + ".mov")
+            bpy.context.scene.render.filepath = os.path.join("//../../render/playblast/", filename + ".mp4")
 
         bpy.ops.render.opengl(animation = 1)
         bpy.ops.render.play_rendered_anim()
