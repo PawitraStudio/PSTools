@@ -38,6 +38,7 @@ def PSFileFunction(self,context):
     row.operator("wm.open_mainfile", icon="FILE_FOLDER", text="")
     row.operator("wm.link", icon="LINK_BLEND", text="")
     row.operator("wm.append", icon="APPEND_BLEND", text="")
+    row.operator("shots.relink", icon="LIBRARY_DATA_DIRECT", text="")
 
 def PSOpenglrender(self, context):
     layout = self.layout
