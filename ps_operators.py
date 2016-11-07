@@ -25,7 +25,7 @@ class PSRelinkShots(bpy.types.Operator):
 
     def execute(self, context):
         objects = bpy.data.objects
-        scene = bpy. context.scene
+        scene = bpy.context.scene
 
         filename = bpy.path.basename(bpy.context.blend_data.filepath)
         filename = os.path.splitext(filename)[0]
@@ -38,11 +38,11 @@ class PSRelinkShots(bpy.types.Operator):
 
         for obj in objects:
             if obj.get is not None and obj.type != 'LAMP':
-                obj.select = True
-            else :
-                obj.select = False
-            bpy.ops.object.delete()
-                #bpy.data.objects.remove(obj, do_unlink=True)
+            #    obj.select = True
+            #else :
+            #    obj.select = False
+            #bpy.ops.object.delete()
+                bpy.data.objects.remove(obj, do_unlink=True)
 
         link = True
 
@@ -53,9 +53,9 @@ class PSRelinkShots(bpy.types.Operator):
             if obj is not None:
                 scene.objects.link(obj)
 
-        #bpy.ops.wm.save_as_mainfile(filepath=bpy.data.filepath)
-        #self.blendpath = bpy.path.abspath(context.blend_data.filepath)
-        #bpy.ops.wm.open_mainfile(filepath=self.blendpath)
+        bpy.ops.wm.save_as_mainfile(filepath=bpy.data.filepath)
+        self.blendpath = bpy.path.abspath(context.blend_data.filepath)
+        bpy.ops.wm.open_mainfile(filepath=self.blendpath)
 
         return {'FINISHED'}
 
@@ -172,14 +172,28 @@ class PSSetRenderPath(bpy.types.Operator):
         render.fps = 25
         render.use_placeholder = 1
         render.display_mode = 'NONE'
-        render.antialiasing_samples = '16'
+        render.resolution_y = 720
+        render.resolution_x = 1280
+        render.resolution_percentage = 100
+        render.pixel_aspect_x = 1
+        render.pixel_aspect_y = 1
+        render.use_antialiasing = True
+        render.use_stamp = False
+        render.use_simplify = False
+        render.antialiasing_samples = '8'
         render.image_settings.compression = 90
         render.image_settings.file_format = 'PNG'
         render.image_settings.color_mode = 'RGBA'
+        render.alpha_mode = 'TRANSPARENT'
 
-        drv_seed = bpy.context.scene.driver_add('cycles.seed')
-        drv_seed.driver.type = 'SCRIPTED'
-        drv_seed.driver.expression = "frame"
+        if scene.cgru:
+            scene.cgru.adv_options = True
+            scene.cgru.relativePaths = True
+            scene.cgru.pause = True
+
+        #drv_seed = bpy.context.scene.driver_add('cycles.seed')
+        #drv_seed.driver.type = 'SCRIPTED'
+        #drv_seed.driver.expression = "frame"
 
         parentdir = bpy.path.abspath(bpy.context.blend_data.filepath)
         parentdir = os.path.abspath(os.path.join(os.path.dirname(parentdir)))
