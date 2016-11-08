@@ -53,9 +53,9 @@ class PSRelinkShots(bpy.types.Operator):
             if obj is not None:
                 scene.objects.link(obj)
         for obj in objects:
-        if obj.type == 'CAMERA':
-            obj.select = 1
-            scene.camera = obj
+            if obj.type == 'CAMERA':
+                obj.select = 1
+                scene.camera = obj
 
         bpy.ops.file.make_paths_relative()
 
@@ -168,12 +168,16 @@ class PSSetRenderPath(bpy.types.Operator):
     bl_idname='set.renderpath'
     bl_label='SetRenderPath'
 
+    @classmethod
+    def poll(cls, context):
+        return bpy.data.filepath != ""
+
     def execute(self, context):
         scene = bpy.context.scene
         render = scene.render
         cycles = scene.cycles
 
-        cycles.film_transparent = 1
+        #cycles.film_transparent = 1
 
         render.fps = 25
         render.use_placeholder = 1
@@ -196,6 +200,21 @@ class PSSetRenderPath(bpy.types.Operator):
             scene.cgru.adv_options = True
             scene.cgru.relativePaths = True
             scene.cgru.pause = True
+            for scn in bpy.data.scenes:
+                totalFrame = scn.frame_end - scn.frame_start
+                if totalFrame >= 150:
+                    scene.cgru.fpertask = 5
+                else:
+                    scene.cgru.fpertask = 10
+            if bpy.path.basename(bpy.data.filepath).endswith("_light.blend"):
+                filename = bpy.path.basename(bpy.context.blend_data.filepath)
+                filename = os.path.splitext(filename)[0]
+                filename = filename.split('_light')
+                filename = filename[0]
+                filename = filename[2:4]
+                priority = 251 - int(filename)
+                for scn in bpy.data.scenes:
+                    scn.cgru.priority = priority
 
         #drv_seed = bpy.context.scene.driver_add('cycles.seed')
         #drv_seed.driver.type = 'SCRIPTED'
