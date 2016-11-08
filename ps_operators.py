@@ -52,6 +52,12 @@ class PSRelinkShots(bpy.types.Operator):
         for obj in data_to.objects:
             if obj is not None:
                 scene.objects.link(obj)
+        for obj in objects:
+        if obj.type == 'CAMERA':
+            obj.select = 1
+            scene.camera = obj
+
+        bpy.ops.file.make_paths_relative()
 
         bpy.ops.wm.save_as_mainfile(filepath=bpy.data.filepath)
         self.blendpath = bpy.path.abspath(context.blend_data.filepath)
