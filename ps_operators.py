@@ -1,5 +1,6 @@
 import os
 import bpy
+import blend_render_info
 from bpy import ops
 from bpy.props import BoolProperty
 from bpy.types import Operator, Panel
@@ -52,6 +53,7 @@ class PSRelinkShots(bpy.types.Operator):
         for obj in data_to.objects:
             if obj is not None:
                 scene.objects.link(obj)
+
         for obj in objects:
             if obj.type == 'CAMERA':
                 obj.select = 1
@@ -176,14 +178,17 @@ class PSSetRenderPath(bpy.types.Operator):
         scene = bpy.context.scene
         render = scene.render
         cycles = scene.cycles
-
+        use_nodes = scene.use_nodes
+        tree = scene.node_tree
+        nodes = tree.nodes
+        links = tree.links
+        #TODO :separate between internal render and cycles
         #cycles.film_transparent = 1
-
         render.fps = 25
         render.use_placeholder = 1
         render.display_mode = 'NONE'
-        render.resolution_y = 720
-        render.resolution_x = 1280
+        #render.resolution_y = 720
+        #render.resolution_x = 1280
         render.resolution_percentage = 100
         render.pixel_aspect_x = 1
         render.pixel_aspect_y = 1
@@ -226,11 +231,72 @@ class PSSetRenderPath(bpy.types.Operator):
         parentdir = os.path.splitext(parentdir)[0]
         filename = bpy.path.basename(bpy.context.blend_data.filepath)
         filename = os.path.splitext(filename)[0]
+        filename = bpy.path.basename(bpy.context.blend_data.filepath)
 
         if filename:
-            #bpy.context.scene.render.filepath = os.path.join("//../../render/", parentdir, filename, filename + "_")
-            bpy.context.scene.render.filepath = os.path.join("//../../render/frames", filename, filename + "_")
+            if filename.find('_') != -1:
+                filename = filename.split('_')
+                filename = filename[0]
+                bpy.context.scene.render.filepath = os.path.join("//../../render/frames", filename, filename + "_")
+            else:
+                bpy.context.scene.render.filepath = os.path.join("//../../render/frames", filename, filename + "_")
 
+        if bpy.path.basename(bpy.data.filepath).endswith("_light.blend"):
+            filename = bpy.path.basename(bpy.context.blend_data.filepath)
+            filename = os.path.splitext(filename)[0]
+            filename = filename.split('_light')
+            filename = bpy.path.ensure_ext(filename[0], ext = '.blend')
+            blendpath = bpy.path.abspath (bpy.context.blend_data.filepath)
+            blenddir, blendfile= os.path.split(blendpath)
+            filepath = os.path.join(blenddir + '/' + filename)
+
+            orig_frameStart, orig_frameEnd, origScene = blend_render_info.read_blend_rend_chunk(filepath)[0]
+            scene.frame_start = orig_frameStart
+            scene.frame_end = orig_frameEnd
+            scene.name = origScene
+
+        if filename.find('_') != -1:
+            filename = filename.split('_')
+            filename = filename[0]
+
+        path = render.filepath
+        path = path.split('_')
+        path = path[0]
+        path = path.split(filename)
+        path = path[0]
+
+        if use_nodes:
+            nodeOutput = nodes.get('fg', None)
+            if nodeOutput is None:
+                for node in nodes:
+                    if node.type == 'R_LAYERS':
+                        output_file = nodes.new('CompositorNodeOutputFile')
+                        output_file.label = node.layer
+                        output_file.name = node.layer
+                        output_file.location = 500,200
+                        outputIndex = nodes.new('CompositorNodeOutputFile')
+                        outputIndex.label = 'mask'
+                        outputIndex.name = 'fgIndex'
+                        outputIndex.location = 700,300
+
+                        links.new(
+                            node.outputs['Image'],
+                            output_file.inputs['Image']
+                            )
+                        links.new(
+                            node.outputs['IndexMA'],
+                            outputIndex.inputs['Image']
+                            )
+                    elif node.type == 'OUTPUT_FILE':
+                        node.base_path = path + filename + '/' + node.label + '/'
+                        fileSlot = node.file_slots.get('Image', None)
+                        if fileSlot is not None:
+                            fileSlot.path = node.label + '_' + filename + '_'
+
+            unusedNode = nodes.get('fgIndex.001', None)
+            if unusedNode is not None:
+                nodes.remove(unusedNode)
+            #bpy.context.scene.render.filepath = os.path.join("//../../render/", parentdir, filename, filename + "_")
         bpy.ops.wm.save_as_mainfile(filepath=bpy.data.filepath)
 
         return {'FINISHED'}
@@ -302,12 +368,12 @@ class PSOpenglTools(bpy.types.Operator):
         scene.name = filename + "_scene"
 
         if filename:
-            # special request for warriq purpose, so the opengl will be rendered
-            # inside render folder
-            #bpy.context.scene.render.filepath = os.path.join("//../../../03_render/opengl/", filename + "_")
-            # below code is the old code for most project
-            #bpy.context.scene.render.filepath = os.path.join("//../../render/playblast/", parentdir, filename, filename + "_")
-            bpy.context.scene.render.filepath = os.path.join("//../../render/playblast/", filename + ".mp4")
+            if filename.find('_') != -1:
+                filename = filename.split('_')
+                filename = filename[0]
+                bpy.context.scene.render.filepath = os.path.join("//../../render/playblast/", filename + ".mp4")
+            else:
+                bpy.context.scene.render.filepath = os.path.join("//../../render/playblast/", filename + ".mp4")
 
         bpy.ops.render.opengl(animation = 1)
         bpy.ops.render.play_rendered_anim()

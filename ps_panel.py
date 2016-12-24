@@ -12,6 +12,14 @@ from bpy import context
 #        row.operator("set.daihatsurenderpath", icon="SCENE", text="Daihatsu")
 #
 # Below code was copied from here https://gist.github.com/Fweeb/bb61c15139bff338cb17
+def setpath(self, context):
+    layout = self.layout
+
+    col = layout.column()
+    row = col.row(align=True)
+
+    row.operator("set.renderpath", text="Set Path", icon="FILE_FOLDER")
+
 def lock_ui(self, context):
     layout = self.layout
 
@@ -68,6 +76,8 @@ class PSTools(bpy.types.Panel):
         col.operator("opengl.toggle", text="Boomsmash", icon="CLIP")
         col.operator("set.renderpath", text="Set Path", icon="FILE_FOLDER")
         col.operator("scene.simplify", text="Simplify", icon="META_CUBE")
+        if bpy.context.scene.cgru:
+            col.operator("cgru.submit", text="CGRU Submit", icon="SOLO_OFF")
 
         col.separator()
 
@@ -109,17 +119,20 @@ class VIEW3D_PIE_pstools(Menu):
         pie.operator("VIEW3D_OT_view_selected", text="View Selected", icon='VIEWZOOM')
         pie.operator("grid.toggle", text="Display Grid", icon='GRID')
 
+####
 
 def register():
     bpy.utils.register_module(__name__)
     bpy.types.RENDER_PT_dimensions.append(PSSwitchRenderResolution)
     bpy.types.INFO_HT_header.prepend(PSFileFunction)
+    bpy.types.NODE_HT_header.append(setpath)
     bpy.types.VIEW3D_PT_view3d_properties.append(lock_ui)
 
 def unregister():
     bpy.utils.unregister_module(__name__)
     bpy.types.RENDER_PT_dimensions.remove(PSSwitchRenderResolution)
     bpy.types.INFO_HT_header.remove(PSFileFunction)
+    bpy.types.NODE_HT_header.remove(setpath)
     bpy.types.VIEW3D_PT_view3d_properties.remove(lock_ui)
 
 if __name__ == "__main__":
