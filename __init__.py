@@ -2,7 +2,7 @@ bl_info = {
     "name": "Pawitra Studio Tools",
     "description": "A series of tools that being used in Pawitra Studio",
     "author": "Aditia A. Pratama",
-    "version": (1, 0, 0),
+    "version": (1, 0, 1),
     "blender": (2, 78),
     "location": "Tools Panel",
     "warning": '',  # used for warning icon and text in addons panel
