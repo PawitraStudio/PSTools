@@ -53,10 +53,10 @@ DEFAULT_PER_PAGE = 30
 
 class Singleton_updater(object):
 	"""
-	This is the singleton class to reference a copy from, 
+	This is the singleton class to reference a copy from,
 	it is the shared module level class
 	"""
-	
+
 	def __init__(self):
 		"""
 		#UPDATE
@@ -82,7 +82,7 @@ class Singleton_updater(object):
 		self._version_max_update = None
 
 		# by default, backup current addon if new is being loaded
-		self._backup_current = True 
+		self._backup_current = True
 
 		# by default, enable/disable the addon.. but less safe.
 		self._auto_reload_post_update = False
@@ -177,7 +177,7 @@ class Singleton_updater(object):
 		if type(value) != type(False):
 			raise ValueError("Verbose must be a boolean value")
 		self._fake_install = bool(value)
-			
+
 	@property
 	def user(self):
 		return self._user
@@ -312,7 +312,7 @@ class Singleton_updater(object):
 			self._check_interval_enable = False
 		else:
 			self._check_interval_enable = True
-		
+
 		self._check_interval_months = months
 		self._check_interval_days = days
 		self._check_interval_hours = hours
@@ -461,19 +461,19 @@ class Singleton_updater(object):
 				self._error_msg = "404 - repository not found, verify register settings"
 			else:
 				self._error_msg = "Response: "+str(e.code)
-			self._update_ready = None 
+			self._update_ready = None
 		except urllib.error.URLError as e:
 			self._error = "URL error, check internet connection"
 			self._error_msg = str(e.reason)
-			self._update_ready = None 
+			self._update_ready = None
 			return None
 		else:
 			result_string = result.read()
 			result.close()
 			return result_string.decode()
 		# if we didn't get here, return or raise something else
-		
-		
+
+
 	# result of all api calls, decoded into json format
 	def get_api(self, url):
 		# return the json version
@@ -496,7 +496,7 @@ class Singleton_updater(object):
 		if self._verbose:print("Preparing staging folder for download:\n",local)
 		if os.path.isdir(local) == True:
 			try:
-				shutil.rmtree(local) 
+				shutil.rmtree(local)
 				os.makedirs(local)
 			except:
 				error = "failed to remove existing staging directory"
@@ -505,7 +505,7 @@ class Singleton_updater(object):
 				os.makedirs(local)
 			except:
 				error = "failed to make staging directory"
-		
+
 		if error != None:
 			if self._verbose: print("Error: Aborting update, "+error)
 			raise ValueError("Aborting update, "+error)
@@ -515,7 +515,7 @@ class Singleton_updater(object):
 		if self._verbose:print("Now retreiving the new source zip")
 
 		self._source_zip = os.path.join(local,"source.zip")
-		
+
 		if self._verbose:print("Starting download update zip")
 		urllib.request.urlretrieve(url, self._source_zip)
 		if self._verbose:print("Successfully downloaded update zip")
@@ -559,7 +559,7 @@ class Singleton_updater(object):
 		self._json["backup_date"] = ""
 		self._json["just_restored"] = True
 		self._json["just_updated"] = True
-		self.save_updater_json() 
+		self.save_updater_json()
 
 		self.reload_addon()
 
@@ -576,7 +576,7 @@ class Singleton_updater(object):
 			if self._verbose:print("Source folder cleared and recreated")
 		except:
 			pass
-		
+
 
 		if self.verbose:print("Begin extracting source")
 		if zipfile.is_zipfile(self._source_zip):
@@ -609,7 +609,7 @@ class Singleton_updater(object):
 		origpath = os.path.dirname(__file__) # verify, is __file__ always valid?
 
 		self.deepMergeDirectory(origpath,unpath)
-		
+
 		# now save the json state
 		#  Change to True, to trigger the handler on other side
 		#  if allowing reloading within same blender instance
@@ -642,7 +642,7 @@ class Singleton_updater(object):
 					os.remove(destFile)
 				srcFile = os.path.join(path, file)
 				os.rename(srcFile, destFile)
-	
+
 
 	def reload_addon(self):
 		# if post_update false, skip this function
@@ -679,7 +679,7 @@ class Singleton_updater(object):
 
 		if text == None: return ()
 
-		# should go through string and remove all non-integers, 
+		# should go through string and remove all non-integers,
 		# and for any given break split into a different section
 
 		segments = []
@@ -767,7 +767,7 @@ class Singleton_updater(object):
 			if self.verbose:
 				print("Aborting check for updated, check interval not reached")
 			return (False, None, None)
-		
+
 		# check if using tags or releases
 		# note that if called the first time, this will pull tags from online
 		if self._fake_install == True:
@@ -776,9 +776,9 @@ class Singleton_updater(object):
 			self._update_ready = True
 			self._update_version = "(999,999,999)"
 			self._update_link = "http://127.0.0.1"
-			
+
 			return (self._update_ready, self._update_version, self._update_link)
-		
+
 		# primaryb internet call
 		self.get_tags() # sets self._tags and self._tag_latest
 
@@ -811,7 +811,7 @@ class Singleton_updater(object):
 			link = self._tags[1]["zipball_url"] # potentially other sources
 		else:
 			link = self._tags[0]["zipball_url"] # potentially other sources
-		
+
 		if new_version == ():
 			self._update_ready = False
 			self._update_version = None
@@ -860,7 +860,7 @@ class Singleton_updater(object):
 		# different versions of the addon to revert back to
 		# clean: not used, but in future could use to totally refresh addon
 		self._json["update_ready"] = False
-		self._json["ignore"] = False # clear ignore flag 
+		self._json["ignore"] = False # clear ignore flag
 		self._json["version_text"] = {}
 
 		if revert_tag != None:
@@ -923,7 +923,7 @@ class Singleton_updater(object):
 	def past_interval_timestamp(self):
 		if self._check_interval_enable == False:
 			return True # ie this exact feature is disabled
-		
+
 		if "last_check" not in self._json or self._json["last_check"] == "":
 			return True
 		else:
@@ -1022,7 +1022,7 @@ class Singleton_updater(object):
 		check_thread.daemon = True
 		self._check_thread = check_thread
 		check_thread.start()
-		
+
 		return True
 
 	def async_check_update(self, now, callback=None):
@@ -1069,4 +1069,3 @@ class Singleton_updater(object):
 # -----------------------------------------------------------------------------
 
 Updater = Singleton_updater()
-

@@ -14,6 +14,7 @@ def setcamera(context):
     for ob in bpy.context.scene.objects:
         if view3d.view_perspective != 'CAMERA':
             bpy.ops.view3d.viewnumpad(type='CAMERA')
+    return setcamera
 
 class PSRelinkShots(bpy.types.Operator):
     'Auto Relink Shots File'
@@ -22,7 +23,7 @@ class PSRelinkShots(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return bpy.data.filepath != "" and bpy.data.filepath.endswith("_light.blend")
+        return bpy.data.filepath != "" and bpy.data.filepath.startswith("lg_")
 
     def execute(self, context):
         objects = bpy.data.objects

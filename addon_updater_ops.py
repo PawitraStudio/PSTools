@@ -718,7 +718,7 @@ def register(bl_info):
 	# print("Running updater reg")
 
 	# choose your own username
-	updater.user = "PawitraStudio"
+	updater.user = "pawitrastudio"
 
 	# choose your own repository, must match github name
 	updater.repo = "PSTools"
@@ -726,7 +726,7 @@ def register(bl_info):
 	#updater.addon = # define at top of module, must be done first
 
 	# Website for manual addon download, optional
-	updater.website = "https://github.com/PawitraStudio/PSTools"
+	updater.website = "https://github.com/PawitraStudio/PSTools/"
 
 	# used to check/compare versions
 	updater.current_version = bl_info["version"]
@@ -738,7 +738,7 @@ def register(bl_info):
 
 	# optional, consider turning off for production or allow as an option
 	# This will print out additional debugging info to the console
-	updater.verbose = True # make False for production default
+	updater.verbose = False # make False for production default
 
 	# optional, customize where the addon updater processing subfolder is,
 	# needs to be within the same folder as the addon itself
