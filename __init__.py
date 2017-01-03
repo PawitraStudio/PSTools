@@ -20,6 +20,7 @@ addon_keymaps = []
 
 
 def register():
+    addon_updater_ops.register(bl_info)
     ps_operators.register()
     ps_panel.register()
     bpy.utils.register_module(__name__)
@@ -32,18 +33,20 @@ def register():
         kmi = km.keymap_items.new('wm.call_menu_pie', 'E', 'PRESS', shift=True)
         kmi.properties.name = 'VIEW3D_PIE_pstools'
 
-    addon_keymaps.append(km)
+    addon_keymaps.append((km, kmi))
 
 
 def unregister():
-    ps_operators.unregister()
-    ps_panel.unregister()
-    bpy.utils.unregister_module(__name__)
-
     # remove the add-on keymaps
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()
+
+    addon_updater_ops.unregister()
+    ps_operators.unregister()
+    ps_panel.unregister()
+
+    bpy.utils.unregister_module(__name__)
 
 if __name__ == "__main__":
     register()
