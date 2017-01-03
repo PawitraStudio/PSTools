@@ -1,9 +1,9 @@
 {
-    "backup_date": "",
-    "just_updated": false,
-    "last_check": "",
     "version_text": {},
-    "update_ready": false,
     "ignore": false,
-    "just_restored": false
+    "just_restored": false,
+    "last_check": "2016-12-26 18:05:58.290549",
+    "backup_date": "",
+    "update_ready": false,
+    "just_updated": false
 }
