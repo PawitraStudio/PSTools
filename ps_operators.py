@@ -33,8 +33,8 @@ class PSRelinkShots(bpy.types.Operator):
 
         filename = bpy.path.basename(bpy.context.blend_data.filepath)
         filename = os.path.splitext(filename)[0]
-        filename = filename.split('_light')
-        filename = bpy.path.ensure_ext(filename[0], ext='.blend')
+        filename = filename.split('lg_')
+        filename = bpy.path.ensure_ext(filename[1], ext='.blend')
 
         blendpath = bpy.path.abspath(bpy.context.blend_data.filepath)
         blenddir, blendfile = os.path.split(blendpath)
@@ -636,6 +636,7 @@ def register():
 def unregister():
     del bpy.types.Scene.RNSeparator
     bpy.types.INFO_HT_header.remove(info_scene)
+
 
 if __name__ == "__main__":
     register()

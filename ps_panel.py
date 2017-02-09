@@ -249,5 +249,6 @@ def unregister():
     bpy.types.NODE_HT_header.remove(setpath)
     bpy.types.VIEW3D_PT_view3d_properties.remove(lock_ui)
 
+
 if __name__ == "__main__":
     register()
