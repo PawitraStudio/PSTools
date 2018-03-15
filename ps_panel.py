@@ -143,12 +143,7 @@ class PSTools(bpy.types.Panel):
             "scene.simplify",
             text="Simplify",
             icon="META_CUBE")
-        if bpy.context.scene.cgru:
-            col.operator(
-                "cgru.submit",
-                text="CGRU Submit",
-                icon="SOLO_OFF")
-
+        
         col.separator()
 
         view = context.scene.render
