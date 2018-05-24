@@ -17,6 +17,13 @@ def setcamera(context):
             bpy.ops.view3d.viewnumpad(type='CAMERA')
     return setcamera
 
+# class PSScenesRender(bpy.types.Operator):
+#     'Adjust Render Reseolution for all scenes'
+#     bl_idname = 'scn.renderres'
+#     bl_label = 'Scene Render Resolution'
+
+   
+
 
 class PSRelinkShots(bpy.types.Operator):
     'Auto Relink Shots File'
@@ -95,42 +102,42 @@ class PSSetRenderPath(bpy.types.Operator):
         links = tree.links
         # TODO :separate between internal render and cycles
         # cycles.film_transparent = 1
-        render.fps = 25
-        render.use_placeholder = 1
-        render.display_mode = 'NONE'
-        # render.resolution_y = 720
-        # render.resolution_x = 1280
-        render.resolution_percentage = 100
-        render.pixel_aspect_x = 1
-        render.pixel_aspect_y = 1
-        render.use_antialiasing = True
-        render.use_stamp = False
-        render.use_simplify = False
-        render.antialiasing_samples = '8'
-        render.image_settings.compression = 90
-        render.image_settings.file_format = 'PNG'
-        render.image_settings.color_mode = 'RGBA'
-        render.alpha_mode = 'TRANSPARENT'
+        # render.fps = 25
+        # render.use_placeholder = 1
+        # render.display_mode = 'NONE'
+        # # render.resolution_y = 720
+        # # render.resolution_x = 1280
+        # render.resolution_percentage = 100
+        # render.pixel_aspect_x = 1
+        # render.pixel_aspect_y = 1
+        # render.use_antialiasing = True
+        # render.use_stamp = False
+        # render.use_simplify = False
+        # render.antialiasing_samples = '8'
+        # render.image_settings.compression = 90
+        # render.image_settings.file_format = 'PNG'
+        # render.image_settings.color_mode = 'RGBA'
+        # render.alpha_mode = 'TRANSPARENT'
 
-        if scene.cgru:
-            scene.cgru.adv_options = True
-            scene.cgru.relativePaths = True
-            scene.cgru.pause = True
-            for scn in bpy.data.scenes:
-                totalFrame = scn.frame_end - scn.frame_start
-                if totalFrame >= 150:
-                    scene.cgru.fpertask = 5
-                else:
-                    scene.cgru.fpertask = 10
-            if bpy.path.basename(bpy.data.filepath).endswith("_light.blend"):
-                filename = bpy.path.basename(bpy.context.blend_data.filepath)
-                filename = os.path.splitext(filename)[0]
-                filename = filename.split('_light')
-                filename = filename[0]
-                filename = filename[2:4]
-                priority = 251 - int(filename)
-                for scn in bpy.data.scenes:
-                    scn.cgru.priority = priority
+        # if scene.cgru:
+        #     scene.cgru.adv_options = True
+        #     scene.cgru.relativePaths = True
+        #     scene.cgru.pause = True
+        #     for scn in bpy.data.scenes:
+        #         totalFrame = scn.frame_end - scn.frame_start
+        #         if totalFrame >= 150:
+        #             scene.cgru.fpertask = 5
+        #         else:
+        #             scene.cgru.fpertask = 10
+        #     if bpy.path.basename(bpy.data.filepath).endswith("_light.blend"):
+        #         filename = bpy.path.basename(bpy.context.blend_data.filepath)
+        #         filename = os.path.splitext(filename)[0]
+        #         filename = filename.split('_light')
+        #         filename = filename[0]
+        #         filename = filename[2:4]
+        #         priority = 251 - int(filename)
+        #         for scn in bpy.data.scenes:
+        #             scn.cgru.priority = priority
 
         # drv_seed = bpy.context.scene.driver_add('cycles.seed')
         # drv_seed.driver.type = 'SCRIPTED'
@@ -158,70 +165,155 @@ class PSSetRenderPath(bpy.types.Operator):
                     filename,
                     filename + "_")
 
-        if bpy.path.basename(bpy.data.filepath).endswith("_light.blend"):
-            filename = bpy.path.basename(bpy.context.blend_data.filepath)
-            filename = os.path.splitext(filename)[0]
-            filename = filename.split('_light')
-            filename = bpy.path.ensure_ext(filename[0], ext='.blend')
-            blendpath = bpy.path.abspath(bpy.context.blend_data.filepath)
-            blenddir, blendfile = os.path.split(blendpath)
-            filepath = os.path.join(blenddir + '/' + filename)
+        # if bpy.path.basename(bpy.data.filepath).endswith("_light.blend"):
+        #     filename = bpy.path.basename(bpy.context.blend_data.filepath)
+        #     filename = os.path.splitext(filename)[0]
+        #     filename = filename.split('_light')
+        #     filename = bpy.path.ensure_ext(filename[0], ext='.blend')
+        #     blendpath = bpy.path.abspath(bpy.context.blend_data.filepath)
+        #     blenddir, blendfile = os.path.split(blendpath)
+        #     filepath = os.path.join(blenddir + '/' + filename)
 
-            orig_frameStart,
-            orig_frameEnd,
-            origScene = blend_render_info.read_blend_rend_chunk(filepath)[0]
-            scene.frame_start = orig_frameStart
-            scene.frame_end = orig_frameEnd
-            scene.name = origScene
+        #     orig_frameStart,
+        #     orig_frameEnd,
+        #     origScene = blend_render_info.read_blend_rend_chunk(filepath)[0]
+        #     scene.frame_start = orig_frameStart
+        #     scene.frame_end = orig_frameEnd
+        #     scene.name = origScene
 
-        if filename.find('_') != -1:
-            filename = filename.split('_')
-            filename = filename[0]
+        # if filename.find('_') != -1:
+        #     filename = filename.split('_')
+        #     filename = filename[0]
 
-        path = render.filepath
-        path = path.split('_')
-        path = path[0]
-        path = path.split(filename)
-        path = path[0]
+        # path = render.filepath
+        # path = path.split('_')
+        # path = path[0]
+        # path = path.split(filename)
+        # path = path[0]
 
-        if use_nodes:
-            nodeOutput = nodes.get('fg', None)
-            if nodeOutput is None:
-                for node in nodes:
-                    if node.type == 'R_LAYERS':
-                        output_file = nodes.new('CompositorNodeOutputFile')
-                        output_file.label = node.layer
-                        output_file.name = node.layer
-                        output_file.location = 500, 200
-                        outputIndex = nodes.new('CompositorNodeOutputFile')
-                        outputIndex.label = 'mask'
-                        outputIndex.name = 'fgIndex'
-                        outputIndex.location = 700, 300
+        # if use_nodes:
+        #     nodeOutput = nodes.get('fg', None)
+        #     if nodeOutput is None:
+        #         for node in nodes:
+        #             if node.type == 'R_LAYERS':
+        #                 output_file = nodes.new('CompositorNodeOutputFile')
+        #                 output_file.label = node.layer
+        #                 output_file.name = node.layer
+        #                 output_file.location = 500, 200
+        #                 outputIndex = nodes.new('CompositorNodeOutputFile')
+        #                 outputIndex.label = 'mask'
+        #                 outputIndex.name = 'fgIndex'
+        #                 outputIndex.location = 700, 300
 
-                        links.new(
-                            node.outputs['Image'],
-                            output_file.inputs['Image']
-                            )
-                        links.new(
-                            node.outputs['IndexMA'],
-                            outputIndex.inputs['Image']
-                            )
-                    elif node.type == 'OUTPUT_FILE':
-                        node.base_path = path + filename\
-                            + '/' + node.label + '/'
-                        fileSlot = node.file_slots.get('Image', None)
-                        if fileSlot is not None:
-                            fileSlot.path = node.label + '_' + filename + '_'
+        #                 links.new(
+        #                     node.outputs['Image'],
+        #                     output_file.inputs['Image']
+        #                     )
+        #                 links.new(
+        #                     node.outputs['IndexMA'],
+        #                     outputIndex.inputs['Image']
+        #                     )
+        #             elif node.type == 'OUTPUT_FILE':
+        #                 node.base_path = path + filename\
+        #                     + '/' + node.label + '/'
+        #                 fileSlot = node.file_slots.get('Image', None)
+        #                 if fileSlot is not None:
+        #                     fileSlot.path = node.label + '_' + filename + '_'
 
-            unusedNode = nodes.get('fgIndex.001', None)
-            if unusedNode is not None:
-                nodes.remove(unusedNode)
+        #     unusedNode = nodes.get('fgIndex.001', None)
+        #     if unusedNode is not None:
+        #         nodes.remove(unusedNode)
             # bpy.context.scene.render.filepath = os.path.join(
             #   "//../../render/", parentdir, filename, filename + "_")
         bpy.ops.wm.save_as_mainfile(filepath=bpy.data.filepath)
 
         return {'FINISHED'}
 
+class KSAutoSetup(bpy.types.Operator):
+    'Automatic Setup Operators for Kidsong Project'
+    bl_idname = 'set.ksrender'
+    bl_label = 'SetKSRender'
+    
+    # kode ini utk memastikan filenya ada dan telah disimpan
+    @classmethod
+    def poll(cls, context):
+        return bpy.data.filepath != ""\
+            and bpy.context.scene.render.engine == 'CYCLES'
+    
+    def execute(self, context):
+        scene = bpy.context.scene
+        render = scene.render
+        cycles = scene.cycles
+        # use_nodes = scene.use_nodes
+        # tree = scene.node_tree
+        # nodes = tree.nodes
+        # links = tree.links
+
+        filename = bpy.path.basename(bpy.context.blend_data.filepath)
+        filename = filename.split('.')
+        namafile = filename[0]
+        episode = (namafile[3]+namafile[4])
+        
+        # semua setting scene
+        # scene.view_settings.exposure = 1.2
+        # scene.view_settings.gamma = 0.8
+        # scene.world.light_settings.ao_factor = 0.1
+        # scene.world.light_settings.distance = 10
+        # scene.world.light_settings.use_ambient_occlusion = 1
+        
+        # semua setting render    
+        render.engine = 'CYCLES'
+        render.resolution_x = 1920
+        render.resolution_y = 1080
+        render.resolution_percentage = 100
+        render.tile_x = 480
+        render.tile_y = 270 
+        # render.use_compositing =  1
+        render.use_sequencer = 0
+        render.use_simplify = 1
+        render.simplify_subdivision_render = 6
+        
+        # semua setting cycles
+        cycles.device = 'GPU'
+        cycles.progressive = 'BRANCHED_PATH'
+        cycles.aa_samples = 32
+        cycles.sample_clamp_indirect = 1
+        cycles.film_transparent = True
+        cycles.sample_clamp_indirect = 1
+        cycles.ao_bounces = 3
+        cycles.ao_bounces_render = 3
+
+        # enable the layer
+        for scn in bpy.data.scenes:
+            scn.layers[0] = 1 
+            scn.layers[1] = 0
+            scn.layers[2] = 0
+            scn.layers[3] = 0
+            scn.layers[4] = 0
+            scn.layers[5] = 1
+            scn.layers[6] = 0
+            scn.layers[7] = 0
+            scn.layers[8] = 0
+            scn.layers[9] = 0
+            scn.layers[10] = 1
+            scn.layers[11] = 0
+            scn.layers[12] = 0
+            scn.layers[13] = 0
+            scn.layers[14] = 0
+            scn.layers[15] = 1
+            scn.layers[16] = 0
+            scn.layers[17] = 0
+            scn.layers[18] = 0
+            scn.layers[19] = 0
+
+        # aktivasi denoising
+        for layer in render.layers:
+            layer.cycles.use_denoising = 1
+        
+		#file save
+        bpy.context.scene.render.filepath = "x:\\PROJECTS\\20170910_english_time_song\\03_post\\render\\"+episode+"\\"+namafile+"\\"+namafile+"_"""
+        
+        return {'FINISHED'}
 
 class PSOpenglTools(bpy.types.Operator):
     'Automatic OpenGL Render for most projects'
@@ -292,8 +384,102 @@ class PSOpenglTools(bpy.types.Operator):
 
         if filename:
             if filename.find('an') != -1:
-                filename = filename.split('an_')
-                filename = filename[1]
+                # filename = filename.split('an_')
+                # filename = filename[1]
+                render.filepath = os.path.join(
+                    prefs.custom_path, filename + ".mp4") \
+                    if prefs.use_custom_path else \
+                    os.path.join(
+                        "//../../render/playblast/", filename + ".mp4")
+            else:
+                render.filepath = os.path.join(
+                    "//../../render/playblast/", filename + ".mp4")
+
+        bpy.ops.render.opengl(animation=1)
+        if prefs.use_autoplay is True:
+            bpy.ops.render.play_rendered_anim()
+
+        self.blendpath = bpy.path.abspath(context.blend_data.filepath)
+        bpy.ops.wm.open_mainfile(filepath=self.blendpath)
+
+        return {'FINISHED'}
+
+class PSHiresOpenglTools(bpy.types.Operator):
+    'Automatic Hires OpenGL Render for most projects'
+    bl_idname = 'openglhires.toggle'
+    bl_label = 'OpenglHiresToggle'
+
+    def execute(self, context):
+        scene = context.scene
+        render = scene.render
+        space = context.space_data
+        objects = bpy.data.objects
+
+        setcamera(context)
+        bpy.ops.wm.save_as_mainfile(filepath=bpy.data.filepath)
+        space.show_only_render = 1
+        scene.frame_step = 1
+        for obj in objects:
+            for mod in obj.modifiers:
+                if mod.type == 'SUBSURF':
+                    mod.use_opensubdiv = 1
+        # scene.game_settings.material_mode = 'GLSL'
+        bpy.context.space_data.viewport_shade = 'MATERIAL'
+        render.use_antialiasing = 1
+        render.use_stamp = 1
+        render.use_stamp_time = 0
+        render.use_stamp_date = 0
+        render.use_stamp_render_time = 0
+        render.use_stamp_frame = 1
+        render.use_stamp_scene = 0
+        render.use_stamp_camera = 0
+        render.use_stamp_lens = 1
+        render.use_stamp_filename = 1
+        render.use_stamp_note = 1
+        render.stamp_font_size = 15
+        render.stamp_background = (0, 0, 0, 0.25)
+        render.stamp_foreground = (1, 1, 1, 1)
+        # render.antialiasing_samples = '16'
+        render.alpha_mode = 'SKY'
+        render.use_raytrace = 0
+        render.use_envmaps = 0
+        render.use_sss = 0
+        render.tile_x = 256
+        render.tile_y = 256
+        render.use_overwrite = 1
+        render.use_file_extension = 1
+        render.use_placeholder = 1
+        render.fps = 25
+        render.resolution_percentage = 50
+        # render.resolution_x = 1920
+        # render.resolution_y = 1080
+        render.use_simplify = 0
+        render.simplify_subdivision = 6
+        render.image_settings.file_format = 'FFMPEG'
+        render.ffmpeg.format = 'MPEG4'
+        render.ffmpeg.codec = 'H264'
+        render.ffmpeg.audio_codec = 'AAC'
+        # render.image_settings.compression = 100
+        render.image_settings.color_mode = 'RGB'
+        render.use_sequencer = 0
+        render.use_freestyle = 0
+        render.display_mode = 'NONE'
+
+        parentdir = bpy.path.abspath(bpy.context.blend_data.filepath)
+        parentdir = os.path.abspath(os.path.join(os.path.dirname(parentdir)))
+        parentdir = os.path.basename(parentdir)
+        parentdir = os.path.splitext(parentdir)[0]
+        filename = bpy.path.basename(bpy.context.blend_data.filepath)
+        filename = os.path.splitext(filename)[0]
+
+        render.stamp_note_text = filename
+        scene.name = filename + "_scene"
+        prefs = bpy.context.user_preferences.addons[__package__].preferences
+
+        if filename:
+            if filename.find('an') != -1:
+                # filename = filename.split('an_')
+                # filename = filename[1]
                 render.filepath = os.path.join(
                     prefs.custom_path, filename + ".mp4") \
                     if prefs.use_custom_path else \
@@ -632,12 +818,10 @@ def register():
          name="Separator",
          default="_",
          description="The bit between the base name and incremented number")
-
-
+    
 def unregister():
     del bpy.types.Scene.RNSeparator
     bpy.types.INFO_HT_header.remove(info_scene)
-
 
 if __name__ == "__main__":
     register()

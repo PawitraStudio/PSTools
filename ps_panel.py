@@ -108,7 +108,8 @@ class PSTools(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        col = layout.column()
+        box = layout.box()
+        col = box.column(align=True)
         col.label(text="Setup Tools ")
 
         col.operator(
@@ -122,29 +123,43 @@ class PSTools(bpy.types.Panel):
         col.operator(
             "file.make_paths_relative",
             text="Make Relative",
-            icon='LINK_AREA')
+            icon="LINK_AREA")
         col.operator(
             "file.find_missing_files",
             text="Find Missing",
-            icon='ZOOM_ALL')
+            icon="ZOOM_ALL")
         col.operator(
             "render.render",
             text="Render",
-            icon='RENDER_STILL')
+            icon="RENDER_STILL")
+        # col.operator(
+        #     "set.renderpath",
+        #     text="Set Path",
+        #     icon="FILE_FOLDER")
         col.operator(
+            "set.ksrender",
+            text="Kidsong Setup",
+            icon="SCRIPTWIN")
+
+        box = layout.box()
+        col = box.column(align=True)
+        col.label(text="Boomsmash !")
+        row = col.row(align=True)
+        row.operator(
             "opengl.toggle",
-            text="Boomsmash",
-            icon="CLIP")
-        col.operator(
-            "set.renderpath",
-            text="Set Path",
-            icon="FILE_FOLDER")
+            text="Fast",
+            icon="NEXT_KEYFRAME")
+        row.operator(
+            "openglhires.toggle",
+            text="Smooth",
+            icon="MESH_MONKEY")
+        
         col.operator(
             "scene.simplify",
             text="Simplify",
             icon="META_CUBE")
-        
-        col.separator()
+
+        row.separator
 
         view = context.scene.render
         scene = context.scene
@@ -212,6 +227,7 @@ class PSToolsUpdaterPanel(bpy.types.Panel):
     bl_region_type = 'TOOLS'
     bl_context = "objectmode"
     bl_category = "PSTools"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -232,18 +248,18 @@ class PSToolsUpdaterPanel(bpy.types.Panel):
 
 
 def register():
+    # bpy.utils.register_module(__name__)
     bpy.types.RENDER_PT_dimensions.append(PSSwitchRenderResolution)
     bpy.types.INFO_HT_header.prepend(PSFileFunction)
     bpy.types.NODE_HT_header.append(setpath)
     bpy.types.VIEW3D_PT_view3d_properties.append(lock_ui)
 
-
 def unregister():
+    # bpy.utils.unregister_module(__name__)
     bpy.types.RENDER_PT_dimensions.remove(PSSwitchRenderResolution)
     bpy.types.INFO_HT_header.remove(PSFileFunction)
     bpy.types.NODE_HT_header.remove(setpath)
     bpy.types.VIEW3D_PT_view3d_properties.remove(lock_ui)
-
 
 if __name__ == "__main__":
     register()
