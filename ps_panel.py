@@ -37,6 +37,19 @@ def PSSwitchRenderResolution(self, context):
         text='Switch Resolution',
         icon='FILE_REFRESH')
 
+def KSEditSetup(self, context):
+    layout = self.layout
+    # col = layout.column()
+    # row = col.row(align=True)
+    split = layout.split(percentage=0.66)
+    split.label(text="Only for Kidsong Edit:")
+
+    row = split.row(align=True)
+    row.operator(
+        "set.ksedit",
+        text="Setup",
+        icon="SETTINGS"
+    )
 
 def PSFileFunction(self, context):
     layout = self.layout
@@ -49,10 +62,10 @@ def PSFileFunction(self, context):
         "wm.window_fullscreen_toggle",
         icon="FULLSCREEN_ENTER",
         text="")
-    row.operator(
-        "wm.quit_blender",
-        icon="QUIT",
-        text="")
+    # row.operator(
+    #     "wm.quit_blender",
+    #     icon="QUIT",
+    #     text="")
     row.operator(
         "ps.save_file",
         icon="FILE_TICK",
@@ -253,6 +266,7 @@ def register():
     bpy.types.INFO_HT_header.prepend(PSFileFunction)
     bpy.types.NODE_HT_header.append(setpath)
     bpy.types.VIEW3D_PT_view3d_properties.append(lock_ui)
+    bpy.types.RENDER_PT_render.prepend(KSEditSetup)
 
 def unregister():
     # bpy.utils.unregister_module(__name__)
@@ -260,6 +274,7 @@ def unregister():
     bpy.types.INFO_HT_header.remove(PSFileFunction)
     bpy.types.NODE_HT_header.remove(setpath)
     bpy.types.VIEW3D_PT_view3d_properties.remove(lock_ui)
+    bpy.types.RENDER_PT_render.remove(KSEditSetup)
 
 if __name__ == "__main__":
     register()

@@ -229,6 +229,38 @@ class PSSetRenderPath(bpy.types.Operator):
 
         return {'FINISHED'}
 
+class KSEditSetup(bpy.types.Operator):
+    'Auto Setup for Rendering Edit Sequence per unit in Kidsong Project'
+    bl_idname = 'set.ksedit'
+    bl_label = 'SetKSEdit'
+
+    @classmethod
+    def poll(cls,context):
+        return bpy.data.filepath != ""\
+            and bpy.context.scene.render.use_sequencer == 1
+    
+    def execute(self, context):
+        scene = bpy.context.scene
+        render = scene.render
+
+        scene.view_settings.exposure = 0
+        scene.view_settings.gamma = 1
+        render.use_compositing = False
+        render.resolution_percentage = 100
+        render.image_settings.file_format = 'FFMPEG'
+        render.image_settings.color_mode = 'RGB'
+        render.ffmpeg.format = 'QUICKTIME'
+        render.ffmpeg.constant_rate_factor = 'HIGH'
+        render.ffmpeg.audio_codec = 'AAC'
+        if bpy.app.version >= (2,79,5):
+            render.ffmpeg.ffmpeg_preset = 'GOOD'
+        else :
+            render.ffmpeg.ffmpeg_preset = 'MEDIUM'
+    
+        return {'FINISHED'}
+
+
+
 class KSAutoSetup(bpy.types.Operator):
     'Automatic Setup Operators for Kidsong Project'
     bl_idname = 'set.ksrender'
@@ -266,8 +298,8 @@ class KSAutoSetup(bpy.types.Operator):
         render.resolution_x = 1920
         render.resolution_y = 1080
         render.resolution_percentage = 100
-        render.tile_x = 480
-        render.tile_y = 270 
+        render.tile_x = 240
+        render.tile_y = 216 
         # render.use_compositing =  1
         render.use_sequencer = 0
         render.use_simplify = 1
@@ -668,7 +700,12 @@ class KMSSaveProgress(bpy.types.Operator):
     @classmethod
     def poll(self, context):
         return context.blend_data.is_saved\
-            and not bpy.data.filepath[-7:-6].isnumeric()
+            and not bpy.path.display_name_from_filepath(
+                                os.path.normpath(
+                                    os.path.join(
+                                        bpy.data.filepath, os.pardir
+                                        ))).startswith("WIP_")
+            #and not bpy.data.filepath[-7:-6].isnumeric()
 
     def execute(self, context):
         filename = bpy.path.basename(bpy.context.blend_data.filepath)
@@ -676,7 +713,7 @@ class KMSSaveProgress(bpy.types.Operator):
 
         blendpath = bpy.path.abspath(bpy.context.blend_data.filepath)
         blenddir, blendfile = os.path.split(blendpath)
-        progressdir = os.path.join(blenddir, 'progress_' + filename)
+        progressdir = os.path.join(blenddir, 'WIP_' + filename)
 
         if not os.path.exists(progressdir):
             os.makedirs(progressdir)
@@ -684,13 +721,13 @@ class KMSSaveProgress(bpy.types.Operator):
         if os.path.exists(progressdir) and not os.listdir(progressdir) == []:
             self.report(
                 {'INFO'},
-                "Progress Folder Available, Please Open File ")
+                "WIP Folder Available, Please Open File ")
 
         else:
             progresspath = bpy.path.ensure_ext(
                 filepath=os.path.join(
                     progressdir,
-                    filename + '_01'),
+                    filename + '_v01'),
                 ext=".blend")
 
             bpy.data.use_autopack = 0
