@@ -250,6 +250,7 @@ class KSEditSetup(bpy.types.Operator):
         render.image_settings.file_format = 'FFMPEG'
         render.image_settings.color_mode = 'RGB'
         render.ffmpeg.format = 'QUICKTIME'
+        render.ffmpeg.codec = 'H264'
         render.ffmpeg.constant_rate_factor = 'HIGH'
         render.ffmpeg.audio_codec = 'AAC'
         if bpy.app.version >= (2,79,5):
