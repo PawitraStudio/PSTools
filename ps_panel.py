@@ -166,7 +166,10 @@ class PSTools(bpy.types.Panel):
             "openglhires.toggle",
             text="Smooth",
             icon="MESH_MONKEY")
-        
+        row.operator(
+            "boomsmash.compare",
+            text="Compare",
+            icon="CAMERA_STEREO") 
         col.operator(
             "scene.simplify",
             text="Simplify",
