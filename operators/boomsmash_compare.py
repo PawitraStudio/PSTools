@@ -25,7 +25,7 @@ class PSCompareBoomsmash(bpy.types.Operator):
         for action in actions:
             action.use_fake_user = 1
 
-        prefs = bpy.context.user_preferences.addons[__package__].preferences
+        prefs = bpy.context.user_preferences.addons["PSTools"].preferences
 
         if filename:
             if filename.find('an') != -1:

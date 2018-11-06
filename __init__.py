@@ -1,7 +1,7 @@
 import bpy
 import blend_render_info
 from bpy import ops
-from bpy.props import BoolProperty
+from bpy.props import BoolProperty, IntProperty, EnumProperty, StringProperty
 from bpy.types import Operator, Panel
 
 # Rregister
@@ -29,6 +29,49 @@ bl_info = {
     "wiki_url": "http://gihub.com/PawitraStudio/PSTools",
     "tracker_url": "",
     "category": "3D View"}
+
+class PSToolsPreferences(bpy.types.AddonPreferences):
+    bl_idname = __package__
+
+    use_custom_path = bpy.props.BoolProperty(
+        name="Use Custom Path",
+        description="Enable to use custom path folder for Playblast file",
+        default=False
+        )
+    use_autoplay = bpy.props.BoolProperty(
+        name="Use Autoplay",
+        description="Enable to play video automatically after render ",
+        default=False
+        )
+    custom_path = bpy.props.StringProperty(
+        name="Custom Path",
+        description="""Custom path for Playblast files.""",
+        subtype='DIR_PATH'
+        )
+
+    def draw(self, context):
+        layout = self.layout
+        preferences = context.user_preferences.addons[__package__].preferences
+
+        row = layout.row()
+        # row.prop(self, "prefs_tab", expand=True)
+
+        # if preferences.prefs_tab == "GEN":
+        layout.row()
+        layout = self.layout
+        box = layout.box()
+        box.label("OpenGl/Playblast Settings :")
+
+        row = box.row()
+        row.prop(self, 'use_autoplay')
+        row.prop(self, 'use_custom_path')
+
+        col = box.column()
+        row = col.row()
+        row.label("Custom Playblast Path:")
+        row.active = self.use_custom_path
+        row.prop(self, "custom_path", text="")
+
 
 addon_keymaps = []
 

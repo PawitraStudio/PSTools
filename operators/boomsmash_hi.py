@@ -75,7 +75,7 @@ class PSHiresOpenglTools(bpy.types.Operator):
 
         render.stamp_note_text = filename
         scene.name = filename + "_scene"
-        prefs = bpy.context.user_preferences.addons[__package__].preferences
+        prefs = bpy.context.user_preferences.addons["PSTools"].preferences
 
         if filename:
             if filename.find('an') != -1:
