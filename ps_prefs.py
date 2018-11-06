@@ -3,8 +3,6 @@ import os
 from bpy.types import AddonPreferences
 from bpy.props import *
 from . import addon_updater_ops
-from . import ps_operators
-from . import ps_panel
 
 
 class PSToolsPreferences(bpy.types.AddonPreferences):
