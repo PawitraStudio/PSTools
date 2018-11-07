@@ -94,3 +94,8 @@ class PSTools(bpy.types.Panel):
              text="Graph Editor",
               icon="IPO"
         )
+        row.operator(
+            "popup.dopesheet",
+             text="DopeSheet",
+              icon="ACTION"
+        )
